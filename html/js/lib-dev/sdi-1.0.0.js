@@ -13,6 +13,7 @@ $di().followSpecs(specs)
 	- setup : object where each property refers to a property of the object to create.
 		The value is an object having either a "value" property for assigning a value, or a 
 		"ref" property for referencing another object from the specs.
+		For a property that is a list (array), the value is an array of objects (with either "value" or "ref")
 		
 	Sample (with a sample factory named "EmptyObject")
 		function EmptyObject() {return {a:0,b:0,c:0};};
@@ -32,6 +33,17 @@ $di().followSpecs(specs)
 					c:{value:20},
 					d:{ref:"toto"}
 				}
+			},
+			tata:{
+				factory:EmptyObject,
+				setup:{
+					a:[
+						{value:15},
+						{ref:"titi"},
+						{ref:"toto"},
+						{value:"Whatever"}
+					]
+				}
 			}
 		};
 	
@@ -45,26 +57,37 @@ DISCLAIMER : this library is not hardened against malicious use !!
 */
 
 var $di__instance = {
-	context:{},
-	retrieveOrCreate:function(refid,factory) {
-		if(typeof(this.context[refid]) == 'undefined') this.context[refid] = factory();
-		return this.context[refid];
+	_context:{},
+	_retrieveOrCreate:function(refid,factory) {
+		if(typeof(this._context[refid]) == 'undefined') this._context[refid] = factory();
+		return this._context[refid];
 	},
 	followSpecs:function(specs){
 		for(var refId in specs) if (specs.hasOwnProperty(refId)) {
 			var objSpec = specs[refId];
 			var objSetup = objSpec.setup ;
-			var obj = this.retrieveOrCreate(refId, objSpec.factory);
+			var obj = this._retrieveOrCreate(refId, objSpec.factory);
 			for (var attribute in objSetup) if (objSetup.hasOwnProperty(attribute)) {
 				var attrSpec = objSetup[attribute];
-				if(typeof(attrSpec.ref) != 'undefined') {
-					var ref = attrSpec.ref ;
-					obj[attribute] = this.retrieveOrCreate(ref, specs[ref].factory);
-				}
-				else if (typeof(attrSpec.value) != 'undefined') {
-					obj[attribute] = attrSpec.value ;
+				if ("string" != typeof(attrSpec) && Array.isArray(attrSpec)){
+					var list = [] ;
+					for(var idx = 0 ; idx < attrSpec.length ; idx++) {
+						list[idx] = this._processAttributeSpec(attrSpec[idx], specs);
+					}
+					obj[attribute] = list ;
+				} else {
+					obj[attribute] = this._processAttributeSpec(attrSpec, specs);
 				}
 			}
+		}
+	},
+	_processAttributeSpec:function(attrSpec, specs){
+		if(typeof(attrSpec.ref) != 'undefined') {
+			var ref = attrSpec.ref ;
+			return this._retrieveOrCreate(ref, specs[ref].factory);
+		}
+		else if (typeof(attrSpec.value) != 'undefined') {
+			return attrSpec.value ;
 		}
 	}
 };
@@ -72,8 +95,8 @@ var $di__instance = {
 var $di = function() {
 	var result = $di__instance ;
 	if (0 < arguments.length && (typeof arguments[0] == 'string' || arguments[0] instanceof String)) {
-		if ($di__instance.context.hasOwnProperty(arguments[0])) {
-			result = $di__instance.context[arguments[0]] ;
+		if ($di__instance._context.hasOwnProperty(arguments[0])) {
+			result = $di__instance._context[arguments[0]] ;
 		} else {
 			result = null ;
 		}

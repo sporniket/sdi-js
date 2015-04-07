@@ -19,6 +19,17 @@ describe("$di normal use", function() {
 				c:{value:20},
 				d:{ref:"toto"}
 			}
+		},
+		tata:{
+			factory:EmptyObject,
+			setup:{
+				a:[
+					{value:15},
+					{ref:"titi"},
+					{ref:"toto"},
+					{value:"Whatever"}
+				]
+			}
 		}
 	};
 	
@@ -40,5 +51,16 @@ describe("$di normal use", function() {
 	it("Reference assignation works", function(){
 		expect($di("toto").b).toBe($di("titi"));
 		expect($di("titi").d).toBe($di("toto"));
+	});
+
+	it("A setup Attribute can be a list (array)", function(){
+		var vals = $di("tata").a;
+		expect(Array.isArray(vals)).toBe(true);
+		expect(typeof(vals)).not.toBe("string");
+		expect(vals.length).toBe(4);
+		expect(vals[0]).toBe(15);
+		expect(vals[1]).toBe($di("titi"));
+		expect(vals[2]).toBe($di("toto"));
+		expect(vals[3]).toBe("Whatever");
 	});
 });
