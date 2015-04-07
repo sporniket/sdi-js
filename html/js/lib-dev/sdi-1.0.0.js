@@ -57,11 +57,6 @@ DISCLAIMER : this library is not hardened against malicious use !!
 */
 
 var $di__instance = {
-	_context:{},
-	_retrieveOrCreate:function(refid,factory) {
-		if(typeof(this._context[refid]) == 'undefined') this._context[refid] = factory();
-		return this._context[refid];
-	},
 	followSpecs:function(specs){
 		for(var refId in specs) if (specs.hasOwnProperty(refId)) {
 			var objSpec = specs[refId];
@@ -81,6 +76,7 @@ var $di__instance = {
 			}
 		}
 	},
+	_context:{},
 	_processAttributeSpec:function(attrSpec, specs){
 		if(typeof(attrSpec.ref) != 'undefined') {
 			var ref = attrSpec.ref ;
@@ -89,6 +85,10 @@ var $di__instance = {
 		else if (typeof(attrSpec.value) != 'undefined') {
 			return attrSpec.value ;
 		}
+	},
+	_retrieveOrCreate:function(refid,factory) {
+		if(typeof(this._context[refid]) == 'undefined') this._context[refid] = factory();
+		return this._context[refid];
 	}
 };
 
