@@ -2,13 +2,14 @@
   "name": "sdi-js",
   "version": "1.1.1-SNAPSHOT",
   "description": "Sporniket Dependency Injection javascript library",
-  "main": "dist/sdi.js",
+  "files":"dist/*.js",
+  "main": "dist/sdi.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/N/A"
+    "url": "https://github.com/sporniket/sdi-js.git"
   },
   "keywords": [
     "dependency",
@@ -18,11 +19,11 @@
     "control"
   ],
   "author": "David SPORN",
-  "license": "LGPL3",
+  "license": "LGPL-3.0",
   "bugs": {
-    "url": "https://github.com/N/A/issues"
+    "url": "https://github.com/sporniket/sdi-js/issues"
   },
-  "homepage": "https://github.com/N/A",
+  "homepage": "https://github.com/sporniket/sdi-js",
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-concat": "^0.5.1",
