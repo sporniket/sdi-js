@@ -1,0 +1,1 @@
+Folder containing the usable library (minified and non minified).
