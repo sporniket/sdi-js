@@ -1,6 +1,6 @@
 {
   "name": "sdi-js",
-  "version": "1.1.1-SNAPSHOT",
+  "version": "1.0.0-SNAPSHOT",
   "description": "$porniket Dependency Injection javascript library, a simple dependency injection implementation, a la Spring framework.",
   "main": "dist/sdi.min.js",
   "scripts": {
